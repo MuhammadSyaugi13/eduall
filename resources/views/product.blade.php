@@ -118,7 +118,6 @@
             axios.get('/api/products')  // Replace with your API endpoint
             .then(response => {
                 // Handle success - response will contain the data from the server
-                console.log(response.data)
                 createCards(response.data)
                 createLinkPagination(response.data)
                 
@@ -172,7 +171,6 @@
                 
             })  
             .then(response => {
-                console.log(response.data);
                 createCards(response.data)
                 createLinkPagination(response.data)
             })
