@@ -9,4 +9,10 @@ class Product extends Model
 {
     use HasFactory;
     protected $guarded = 'id';
+
+    public function getPriceAttribute($value)
+    {
+        // Format the price as US dollars
+        return '$' . number_format($value, 2, '.', ',');
+    }
 }
