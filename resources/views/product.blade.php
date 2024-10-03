@@ -16,6 +16,18 @@
             box-shadow: 8px 7px 16px rgb(201, 232, 255); /* Example shadow */
             transform: translate(0, -10px); /* Scale up on hover */
         }
+
+        .link-page{
+            cursor: pointer;
+            background-color: #6b6b6b;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .link-page:hover{
+            background-color: #949494;
+            transition: background-color 0.3s ease-in-out;
+        }
+
     </style>
   </head>
   <body class="bg-light">
@@ -72,8 +84,14 @@
 
       <!-- ./ List of Products -->
 
+      <!-- link pagination -->
+    
+      <div id="pagination-links" class="pagination"></div>
+    
+      <!-- ./ link pagination -->
     </main>
   <!-- ./ Content -->
+
 
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -84,6 +102,10 @@
         const setLoadingGetProduct = () => {
             const listProducts = document.getElementById("list-products")
             listProducts.innerHTML = `<div class="text-center">Loading Memuat Data Product....</div>`
+
+            //hapus link pagination
+            const paginationLinks = document.getElementById("pagination-links")
+            paginationLinks.innerHTML = ""
         }
 
         
@@ -96,8 +118,10 @@
             axios.get('/api/products')  // Replace with your API endpoint
             .then(response => {
                 // Handle success - response will contain the data from the server
-                console.log(response.data);
+                console.log(response.data)
                 createCards(response.data)
+                createLinkPagination(response.data)
+                
             })
             .catch(error => {
                 // Handle error
@@ -150,6 +174,7 @@
             .then(response => {
                 console.log(response.data);
                 createCards(response.data)
+                createLinkPagination(response.data)
             })
             .catch(error => {
                 // Handle error
@@ -159,6 +184,7 @@
 
         /* ./ Search Products */
 
+        /* set card products */ 
         const createCards = (Products) => {
 
             const listProducts = document.getElementById("list-products")
@@ -254,6 +280,50 @@
             }
 
         }
+        /* ./ set card products */
+
+        /* set link pagination */ 
+
+        const createLinkPagination = (Products) => {
+
+            const paginationLinks = document.getElementById("pagination-links")
+            paginationLinks.innerHTML = ""
+
+            if(Products.links){
+                try {
+                                       
+                    Products.links.forEach(paginationLink => {
+    
+                        const linkSpan = document.createElement('span');
+    
+                        linkSpan.innerHTML = `${paginationLink.label}`
+    
+    
+                        linkSpan.classList.add('text-white')
+                        linkSpan.classList.add('rounded')
+                        linkSpan.classList.add('mx-1')
+                        linkSpan.classList.add('px-2')
+                        linkSpan.classList.add('py-1')
+                        linkSpan.classList.add('link-page')
+    
+                        paginationLinks.appendChild(linkSpan)
+    
+                    });
+    
+                } catch (err) {
+                    console.error(err)
+                }
+            }
+
+        }
+
+    //     <div id="pagination-links" class="pagination">
+    //     <span class="text-white rounded  mx-1 px-2 py-1 link-page">1</span>
+    //     <span class="text-white rounded  mx-1 px-2 py-1 link-page">2</span>
+    //     <span class="text-white rounded  mx-1 px-2 py-1 link-page">3</span>
+    //   </div>
+
+        /* ./ set link pagination */ 
 
         
                 
