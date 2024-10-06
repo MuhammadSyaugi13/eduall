@@ -28,6 +28,11 @@
             transition: background-color 0.3s ease-in-out;
         }
 
+        .link-page-disabled{
+            cursor: not-allowed;
+            background-color: #b3b1b1;
+        }
+
     </style>
   </head>
   <body class="bg-light">
@@ -131,17 +136,17 @@
 
         
 
-        /* Search Products */
+      /* Search Products */
 
         let typingTimer;                // Timer identifier
         const doneTypingInterval = 1000; // Time in ms (1 second)
         const inputSearchBrand = document.getElementById('search-brand')
         const inputSearchModel = document.getElementById('search-model')
 
-        // setelah menekan keyboard pada input search brand, maka jalankan doneTyping untuk mengambil data ke server
+        // setelah menekan keyboard pada input search brand, maka jalankan searchProduct untuk mengambil data ke server
         inputSearchBrand.addEventListener('keyup', () => {
             clearTimeout(typingTimer);
-            typingTimer = setTimeout(doneTyping, doneTypingInterval);
+            typingTimer = setTimeout(searchProduct, doneTypingInterval);
         });
 
         // ketika menekan keyboar, hapus time interval
@@ -149,10 +154,10 @@
             clearTimeout(typingTimer);
         });
 
-        // setelah menekan keyboard pada input search model, maka jalankan doneTyping untuk mengambil data ke server
+        // setelah menekan keyboard pada input search model, maka jalankan searchProduct untuk mengambil data ke server
         inputSearchModel.addEventListener('keyup', () => {
             clearTimeout(typingTimer);
-            typingTimer = setTimeout(doneTyping, doneTypingInterval);
+            typingTimer = setTimeout(searchProduct, doneTypingInterval);
         });
 
         // ketika menekan keyboar, hapus time interval
@@ -161,12 +166,13 @@
         });
 
         // eksekusi setelah 1 detik user tidak menekan keyboard 
-        function doneTyping() {
+        function searchProduct() {
             setLoadingGetProduct()
             axios.get('/api/search-products', {
                 params: {
                     brand: (inputSearchBrand.value) ? inputSearchBrand.value : "",
-                    model: (inputSearchModel.value) ? inputSearchModel.value : ""
+                    model: (inputSearchModel.value) ? inputSearchModel.value : "",
+                    page: page
                 }
                 
             })  
@@ -180,9 +186,21 @@
             });
         }
 
-        /* ./ Search Products */
+      /* ./ Search Products */
 
-        /* set card products */ 
+      /* Change Page */
+
+        let page = false
+        function changePage(url){
+            const toPage = (url.split("page=")[1]) ? url.split("page=")[1] : null
+            page = toPage
+            searchProduct()
+        }
+
+      /* ./ Change Page */
+
+
+      /* set card products */ 
         const createCards = (Products) => {
 
             const listProducts = document.getElementById("list-products")
@@ -278,7 +296,7 @@
             }
 
         }
-        /* ./ set card products */
+      /* ./ set card products */
 
         /* set link pagination */ 
 
@@ -297,12 +315,20 @@
                         linkSpan.innerHTML = `${paginationLink.label}`
     
     
-                        linkSpan.classList.add('text-white')
+                        
                         linkSpan.classList.add('rounded')
                         linkSpan.classList.add('mx-1')
                         linkSpan.classList.add('px-2')
                         linkSpan.classList.add('py-1')
-                        linkSpan.classList.add('link-page')
+                        
+                        // jika tidak ada link dan bukan page number yang dipilih, maka bisa di klik untuk pindah halaman 
+                        if(paginationLink.url && !paginationLink.active){
+                            linkSpan.classList.add('text-white')
+                            linkSpan.classList.add('link-page')
+                            linkSpan.setAttribute('onclick', `changePage("${paginationLink.url}")`)
+                        }else{
+                            linkSpan.classList.add('link-page-disabled')
+                        }
     
                         paginationLinks.appendChild(linkSpan)
     
@@ -314,12 +340,6 @@
             }
 
         }
-
-    //     <div id="pagination-links" class="pagination">
-    //     <span class="text-white rounded  mx-1 px-2 py-1 link-page">1</span>
-    //     <span class="text-white rounded  mx-1 px-2 py-1 link-page">2</span>
-    //     <span class="text-white rounded  mx-1 px-2 py-1 link-page">3</span>
-    //   </div>
 
         /* ./ set link pagination */ 
 
